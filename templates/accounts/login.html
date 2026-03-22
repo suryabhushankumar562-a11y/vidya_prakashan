@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Login – Vidya Prakashan Mandir{% endblock %}
+{% block content %}
+
+<div class="page-hero" style="padding:2.5rem 0;">
+  <div class="container">
+    <h1 class="page-hero-title"><i class="bi bi-box-arrow-in-right me-2"></i>Welcome Back</h1>
+    <p class="page-hero-subtitle">Login to access your books, orders, and dashboard</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-5 col-md-7">
+      <div class="vp-form-card">
+
+        <div class="text-center mb-4">
+          <div style="width:72px;height:72px;background:rgba(26,39,68,0.08);border-radius:50%;
+                      display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem;color:var(--vp-primary);">
+            <i class="bi bi-lock"></i>
+          </div>
+          <h3 style="font-family:'Playfair Display',serif;color:var(--vp-primary);">Sign In</h3>
+          <p class="text-muted small">Don't have an account? <a href="/accounts/register/" class="text-warning fw-bold">Register free</a></p>
+        </div>
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Username</label>
+            {{ form.username }}
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-semibold small">Password</label>
+            {{ form.password }}
+          </div>
+
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger py-2 small mb-3">
+            <i class="bi bi-exclamation-circle me-2"></i>{{ form.non_field_errors.0 }}
+          </div>
+          {% endif %}
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="remember">
+              <label class="form-check-label small" for="remember">Remember me</label>
+            </div>
+            <a href="#" class="small text-warning">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-vp-primary w-100 py-2 fw-bold">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Login
+          </button>
+        </form>
+
+        <hr class="my-4">
+        <p class="text-center text-muted small mb-0">
+          <i class="bi bi-shield-check text-success me-1"></i>
+          Your login is secured with Django authentication
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

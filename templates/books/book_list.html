@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}All Books – Vidya Prakashan Mandir{% endblock %}
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <h1 class="page-hero-title"><i class="bi bi-journal-richtext me-2"></i>All Books</h1>
+    <p class="page-hero-subtitle">
+      {% if query %}Search results for "{{ query }}"{% elif selected_category %}Books in {{ selected_category.name }}{% else %}Explore our complete collection{% endif %}
+    </p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-4">
+
+    <!-- ── Sidebar Filters ── -->
+    <div class="col-lg-3">
+      <div class="vp-form-card p-3">
+        <h6 class="fw-bold mb-3" style="color:var(--vp-primary);">
+          <i class="bi bi-funnel me-2 text-warning"></i>Filter Books
+        </h6>
+        <form method="GET" action="/books/">
+          <!-- Search -->
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Search</label>
+            <input type="text" name="q" class="form-control form-control-sm" placeholder="Title or author..." value="{{ query }}">
+          </div>
+
+          <!-- Category -->
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Category</label>
+            <select name="category" class="form-select form-select-sm">
+              <option value="">All Categories</option>
+              {% for cat in categories %}
+              <option value="{{ cat.slug }}" {% if selected_category.slug == cat.slug %}selected{% endif %}>
+                {{ cat.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Price Range -->
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Price Range (₹)</label>
+            <div class="row g-1">
+              <div class="col-6">
+                <input type="number" name="min_price" class="form-control form-control-sm"
+                       placeholder="Min" value="{{ min_price }}">
+              </div>
+              <div class="col-6">
+                <input type="number" name="max_price" class="form-control form-control-sm"
+                       placeholder="Max" value="{{ max_price }}">
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-vp-secondary btn-sm w-100">
+            <i class="bi bi-search me-1"></i>Apply Filters
+          </button>
+          <a href="/books/" class="btn btn-outline-secondary btn-sm w-100 mt-2">
+            <i class="bi bi-x me-1"></i>Clear All
+          </a>
+        </form>
+
+        <hr>
+        <!-- Category Quick Links -->
+        <h6 class="fw-bold mb-2" style="color:var(--vp-primary);">Categories</h6>
+        {% for cat in categories %}
+        <a href="/books/category/{{ cat.slug }}/"
+           class="d-flex justify-content-between align-items-center py-1 text-decoration-none"
+           style="color:var(--vp-text);font-size:0.88rem;border-bottom:1px solid var(--vp-border);">
+          <span><i class="bi {{ cat.icon|default:'bi-bookmark' }} me-2 text-warning"></i>{{ cat.name }}</span>
+          <span class="badge-vp">{{ cat.get_book_count }}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- ── Book Grid ── -->
+    <div class="col-lg-9">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted small">
+          <strong>{{ books.count }}</strong> book{{ books.count|pluralize }} found
+          {% if query %} for "<em>{{ query }}</em>"{% endif %}
+        </span>
+      </div>
+
+      {% if books %}
+      <div class="row g-4">
+        {% for book in books %}
+        <div class="col-6 col-md-4 col-xl-3">
+          <div class="book-card h-100">
+            <div class="book-card-img-wrap">
+              {% if book.cover_image %}
+                <img src="{{ book.cover_image.url }}" alt="{{ book.title }}">
+              {% else %}
+                <div class="book-card-placeholder">
+                  <i class="bi bi-book"></i>
+                  <span class="book-title-overlay">{{ book.title }}</span>
+                </div>
+              {% endif %}
+              {% if book.is_featured %}
+                <span class="book-badge">Featured</span>
+              {% endif %}
+              <div class="book-card-actions">
+                <a href="/books/{{ book.slug }}/" class="btn btn-sm btn-light flex-fill">
+                  <i class="bi bi-eye me-1"></i>View
+                </a>
+                <a href="/cart/add/{{ book.id }}/" class="btn btn-sm btn-warning flex-fill">
+                  <i class="bi bi-cart-plus"></i>
+                </a>
+              </div>
+            </div>
+            <div class="book-card-body">
+              {% if book.category %}
+                <span class="book-category-tag">{{ book.category.name }}</span>
+              {% endif %}
+              <div class="book-card-title">{{ book.title }}</div>
+              <div class="book-card-author"><i class="bi bi-person me-1"></i>{{ book.author }}</div>
+              <div class="book-card-footer">
+                <span class="book-price">{{ book.price }}</span>
+                <div class="star-rating">
+                  {% with avg=book.get_average_rating %}
+                  {% for i in "12345" %}
+                    <i class="bi bi-star{% if forloop.counter <= avg %}-fill{% endif %}"></i>
+                  {% endfor %}
+                  {% endwith %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-search display-2 text-muted d-block mb-3"></i>
+        <h4 style="font-family:'Playfair Display',serif;">No Books Found</h4>
+        <p class="text-muted">Try a different search term or browse all categories.</p>
+        <a href="/books/" class="btn btn-vp-secondary">Browse All Books</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

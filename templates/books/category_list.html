@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}All Categories – Vidya Prakashan Mandir{% endblock %}
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <h1 class="page-hero-title"><i class="bi bi-grid-3x3-gap me-2"></i>All Categories</h1>
+    <p class="page-hero-subtitle">Explore books organized by subject and topic</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-4">
+    {% for cat in categories %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="/books/category/{{ cat.slug }}/" class="text-decoration-none">
+        <div class="category-card">
+          <div class="category-icon">
+            <i class="bi {{ cat.icon|default:'bi-bookmark' }}"></i>
+          </div>
+          <div class="category-name">{{ cat.name }}</div>
+          <div class="category-count">{{ cat.get_book_count }} book{{ cat.get_book_count|pluralize }}</div>
+          {% if cat.description %}
+          <p class="text-muted small mt-2 mb-0">{{ cat.description|truncatechars:80 }}</p>
+          {% endif %}
+        </div>
+      </a>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+      <i class="bi bi-grid display-2 text-muted d-block mb-3"></i>
+      <h4>No categories yet.</h4>
+      <p class="text-muted">Categories will appear here once added by the admin.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

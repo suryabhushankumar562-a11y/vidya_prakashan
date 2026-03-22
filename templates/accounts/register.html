@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Register – Vidya Prakashan Mandir{% endblock %}
+{% block content %}
+
+<div class="page-hero" style="padding:2.5rem 0;">
+  <div class="container">
+    <h1 class="page-hero-title"><i class="bi bi-person-plus me-2"></i>Create Account</h1>
+    <p class="page-hero-subtitle">Join thousands of readers and start learning today</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="vp-form-card">
+
+        <div class="text-center mb-4">
+          <div style="width:72px;height:72px;background:rgba(245,166,35,0.12);border-radius:50%;
+                      display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem;color:var(--vp-secondary);">
+            <i class="bi bi-person-circle"></i>
+          </div>
+          <h3 style="font-family:'Playfair Display',serif;color:var(--vp-primary);">Create Your Account</h3>
+          <p class="text-muted small">Already have an account? <a href="/accounts/login/" class="text-warning fw-bold">Login here</a></p>
+        </div>
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-6">
+              <label class="form-label fw-semibold small">First Name</label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}
+                <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-semibold small">Last Name</label>
+              {{ form.last_name }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold small">Username <span class="text-danger">*</span></label>
+              {{ form.username }}
+              {% if form.username.errors %}
+                <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold small">Email Address <span class="text-danger">*</span></label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold small">Phone (Optional)</label>
+              {{ form.phone }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold small">Password <span class="text-danger">*</span></label>
+              {{ form.password }}
+              {% if form.password.errors %}
+                <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold small">Confirm Password <span class="text-danger">*</span></label>
+              {{ form.confirm_password }}
+              {% if form.confirm_password.errors %}
+                <div class="text-danger small mt-1">{{ form.confirm_password.errors.0 }}</div>
+              {% endif %}
+            </div>
+            {% if form.non_field_errors %}
+            <div class="col-12">
+              <div class="alert alert-danger py-2 small">{{ form.non_field_errors.0 }}</div>
+            </div>
+            {% endif %}
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="terms" required>
+                <label class="form-check-label small" for="terms">
+                  I agree to the <a href="#" class="text-warning">Terms of Service</a> and
+                  <a href="#" class="text-warning">Privacy Policy</a>
+                </label>
+              </div>
+            </div>
+            <div class="col-12 mt-2">
+              <button type="submit" class="btn btn-vp-secondary w-100 py-2 fw-bold">
+                <i class="bi bi-person-check me-2"></i>Create Account
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

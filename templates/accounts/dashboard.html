@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard – Vidya Prakashan Mandir{% endblock %}
+{% block content %}
+
+<div class="page-hero" style="padding:2.5rem 0;">
+  <div class="container">
+    <h1 class="page-hero-title">
+      <i class="bi bi-person-circle me-2"></i>
+      Welcome, {{ user.first_name|default:user.username }}!
+    </h1>
+    <p class="page-hero-subtitle">Manage your account, orders, and reading library</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-4">
+
+    <!-- ── Sidebar ── -->
+    <div class="col-lg-3">
+      <div class="vp-form-card p-0 overflow-hidden">
+        <div class="p-3 text-center" style="background:var(--vp-primary);">
+          <div class="user-avatar mx-auto mb-2" style="width:56px;height:56px;font-size:1.5rem;">
+            {{ user.username|first|upper }}
+          </div>
+          <div class="text-white fw-bold">{{ user.get_full_name|default:user.username }}</div>
+          <div class="text-warning small">{{ user.email }}</div>
+        </div>
+        <div class="p-2">
+          <a href="/accounts/dashboard/" class="d-flex align-items-center gap-2 p-2 rounded text-decoration-none" style="color:var(--vp-primary);">
+            <i class="bi bi-person-circle text-warning"></i> Dashboard
+          </a>
+          <a href="/orders/history/" class="d-flex align-items-center gap-2 p-2 rounded text-decoration-none" style="color:var(--vp-primary);">
+            <i class="bi bi-bag-check text-warning"></i> My Orders
+          </a>
+          <a href="/cart/" class="d-flex align-items-center gap-2 p-2 rounded text-decoration-none" style="color:var(--vp-primary);">
+            <i class="bi bi-cart3 text-warning"></i> My Cart
+            {% if cart_count > 0 %}<span class="badge bg-warning text-dark ms-auto">{{ cart_count }}</span>{% endif %}
+          </a>
+          {% if user.is_staff %}
+          <hr class="my-2">
+          <a href="/adminpanel/" class="d-flex align-items-center gap-2 p-2 rounded text-decoration-none" style="color:var(--vp-primary);">
+            <i class="bi bi-shield-check text-warning"></i> Admin Panel
+          </a>
+          {% endif %}
+          <hr class="my-2">
+          <a href="/accounts/logout/" class="d-flex align-items-center gap-2 p-2 rounded text-decoration-none text-danger">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Main ── -->
+    <div class="col-lg-9">
+
+      <!-- Quick Stats -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(245,166,35,0.12);color:var(--vp-secondary);">
+              <i class="bi bi-bag-check"></i>
+            </div>
+            <div>
+              <div class="stat-number">{{ recent_orders.count }}</div>
+              <div class="stat-label">Recent Orders</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(26,39,68,0.08);color:var(--vp-primary);">
+              <i class="bi bi-cart3"></i>
+            </div>
+            <div>
+              <div class="stat-number">{{ cart_count }}</div>
+              <div class="stat-label">Cart Items</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(25,135,84,0.1);color:#198754;">
+              <i class="bi bi-file-earmark-pdf"></i>
+            </div>
+            <div>
+              <div class="stat-number">{{ recent_orders|length }}</div>
+              <div class="stat-label">Books Owned</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Update Form -->
+      <div class="vp-form-card mb-4">
+        <h5 style="font-family:'Playfair Display',serif;" class="mb-3">
+          <i class="bi bi-pencil-square me-2 text-warning"></i>Edit Profile
+        </h5>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Phone</label>
+              <input type="text" name="phone" class="form-control" value="{{ profile.phone|default:'' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Profile Picture</label>
+              <input type="file" name="profile_picture" class="form-control" accept="image/*">
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-semibold">Address</label>
+              <textarea name="address" class="form-control" rows="2">{{ profile.address|default:'' }}</textarea>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-vp-secondary">
+                <i class="bi bi-save me-2"></i>Save Changes
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="vp-form-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 style="font-family:'Playfair Display',serif;" class="mb-0">
+            <i class="bi bi-clock-history me-2 text-warning"></i>Recent Orders
+          </h5>
+          <a href="/orders/history/" class="btn btn-sm btn-outline-secondary">View All</a>
+        </div>
+
+        {% if recent_orders %}
+        <div class="table-responsive">
+          <table class="table vp-table mb-0">
+            <thead>
+              <tr>
+                <th>Order #</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in recent_orders %}
+              <tr>
+                <td><code>{{ order.order_number }}</code></td>
+                <td>{{ order.created_at|date:"d M Y" }}</td>
+                <td><strong>₹{{ order.total_amount }}</strong></td>
+                <td>
+                  <span class="order-status status-{{ order.status }}">{{ order.get_status_display }}</span>
+                </td>
+                <td>
+                  <a href="/orders/{{ order.order_number }}/" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-bag-x display-5 d-block mb-3"></i>
+          <p>No orders yet. <a href="/books/" class="text-warning fw-bold">Browse books</a> to get started!</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

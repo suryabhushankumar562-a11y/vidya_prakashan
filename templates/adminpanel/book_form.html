@@ -1,0 +1,149 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% block title %}{{ action }} Book – Admin{% endblock %}
+{% block page_title %}{{ action }} Book{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 style="font-family:'Playfair Display',serif;color:var(--vp-primary);">
+      {{ action }} Book
+    </h4>
+    <p class="text-muted small mb-0">
+      {% if action == 'Edit' %}Editing: {{ book.title }}{% else %}Add a new book to the catalog{% endif %}
+    </p>
+  </div>
+  <a href="/adminpanel/books/" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>Back to Books
+  </a>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="row g-4">
+
+    <!-- Main Details -->
+    <div class="col-lg-8">
+      <div class="bg-white rounded p-4 mb-4" style="border:1px solid var(--vp-border);box-shadow:var(--vp-shadow);">
+        <h6 class="fw-bold mb-3 text-muted text-uppercase small">Book Information</h6>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label fw-semibold small">Title <span class="text-danger">*</span></label>
+            {{ form.title }}
+            {% if form.title.errors %}<div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small">Author <span class="text-danger">*</span></label>
+            {{ form.author }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small">Category</label>
+            {{ form.category }}
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold small">Description <span class="text-danger">*</span></label>
+            {{ form.description }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold small">Price (₹) <span class="text-danger">*</span></label>
+            {{ form.price }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold small">Stock</label>
+            {{ form.stock }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold small">Preview Pages</label>
+            {{ form.preview_pages }}
+            <div class="form-text">Pages visible before purchase</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded p-4 mb-4" style="border:1px solid var(--vp-border);box-shadow:var(--vp-shadow);">
+        <h6 class="fw-bold mb-3 text-muted text-uppercase small">Publication Details</h6>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small">ISBN</label>
+            {{ form.isbn }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold small">Publisher</label>
+            {{ form.publisher }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold small">Publication Year</label>
+            {{ form.publication_year }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold small">Language</label>
+            {{ form.language }}
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold small">Total Pages</label>
+            {{ form.pages }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Files -->
+      <div class="bg-white rounded p-4 mb-4" style="border:1px solid var(--vp-border);box-shadow:var(--vp-shadow);">
+        <h6 class="fw-bold mb-3 text-muted text-uppercase small">Book Files</h6>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold small">
+            <i class="bi bi-image me-1 text-warning"></i>Cover Image
+          </label>
+          {{ form.cover_image }}
+          {% if book and book.cover_image %}
+          <div class="mt-2">
+            <img src="{{ book.cover_image.url }}" style="width:80px;border-radius:6px;" alt="Current cover">
+            <div class="form-text">Current cover</div>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-0">
+          <label class="form-label fw-semibold small">
+            <i class="bi bi-file-earmark-pdf me-1 text-danger"></i>Book PDF
+          </label>
+          {{ form.pdf_file }}
+          {% if book and book.pdf_file %}
+          <div class="form-text text-success mt-1">
+            <i class="bi bi-check-circle me-1"></i>PDF already uploaded
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="bg-white rounded p-4 mb-4" style="border:1px solid var(--vp-border);box-shadow:var(--vp-shadow);">
+        <h6 class="fw-bold mb-3 text-muted text-uppercase small">Visibility</h6>
+        <div class="form-check form-switch mb-3">
+          {{ form.is_active }}
+          <label class="form-check-label fw-semibold" for="{{ form.is_active.id_for_label }}">
+            Active (visible to users)
+          </label>
+        </div>
+        <div class="form-check form-switch">
+          {{ form.is_featured }}
+          <label class="form-check-label fw-semibold" for="{{ form.is_featured.id_for_label }}">
+            <i class="bi bi-star-fill text-warning me-1"></i>Featured on homepage
+          </label>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-vp-secondary py-2 fw-bold">
+          <i class="bi bi-save me-2"></i>{{ action }} Book
+        </button>
+        <a href="/adminpanel/books/" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </div>
+
+  </div>
+</form>
+{% endblock %}

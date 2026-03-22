@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}About Us – Vidya Prakashan Mandir{% endblock %}
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <h1 class="page-hero-title"><i class="bi bi-info-circle me-3"></i>About Us</h1>
+    <p class="page-hero-subtitle">Our story, our mission, our commitment to knowledge</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5 align-items-center mb-5">
+    <div class="col-lg-6">
+      <div class="hero-badge mb-3"><i class="bi bi-calendar me-1"></i> Est. 1990</div>
+      <h2 class="section-title">Dedicated to the Spread of Knowledge</h2>
+      <p class="mt-3 text-muted">
+        Vidya Prakashan Mandir has been a cornerstone of educational publishing in India for over three decades.
+        Founded in 1990 in Delhi, we started with a small collection of school textbooks and have grown into
+        a comprehensive publisher serving students from Class 1 through university level.
+      </p>
+      <p class="text-muted">
+        Our name — <em>Vidya Prakashan</em> — means "Publisher of Knowledge" in Sanskrit. Every book we
+        publish is carefully crafted by subject experts, reviewed by educators, and designed to be
+        accessible, accurate, and inspiring.
+      </p>
+      <div class="row g-3 mt-2">
+        <div class="col-6">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(245,166,35,0.15);color:var(--vp-secondary);">
+              <i class="bi bi-journal-richtext"></i>
+            </div>
+            <div>
+              <div class="stat-number">5000+</div>
+              <div class="stat-label">Books Published</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(26,39,68,0.1);color:var(--vp-primary);">
+              <i class="bi bi-people"></i>
+            </div>
+            <div>
+              <div class="stat-number">50K+</div>
+              <div class="stat-label">Happy Readers</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div style="background:linear-gradient(135deg,var(--vp-primary),#2d4a8a);border-radius:16px;
+                  padding:3rem;text-align:center;color:#fff;">
+        <i class="bi bi-book-half" style="font-size:5rem;color:var(--vp-secondary);"></i>
+        <h3 style="font-family:'Playfair Display',serif;margin-top:1.5rem;">Our Mission</h3>
+        <p style="color:rgba(255,255,255,0.75);font-size:0.95rem;margin-top:1rem;">
+          "To make quality education accessible to every student in India, regardless of location or background,
+          through affordable, well-crafted books and digital resources."
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Values -->
+  <div class="row g-4 mt-4">
+    <div class="col-12 text-center mb-3">
+      <h2 class="section-title">Our Core Values</h2>
+    </div>
+    {% for val in "123456" %}
+    <div class="col-md-4">
+      <div class="category-card text-start">
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <div class="category-icon" style="width:48px;height:48px;font-size:1.4rem;flex-shrink:0;">
+            <i class="bi {% if forloop.counter == 1 %}bi-award{% elif forloop.counter == 2 %}bi-lightbulb{% elif forloop.counter == 3 %}bi-shield-check{% elif forloop.counter == 4 %}bi-people{% elif forloop.counter == 5 %}bi-globe{% else %}bi-heart{% endif %}"></i>
+          </div>
+          <h5 class="mb-0" style="font-family:'Playfair Display',serif;">
+            {% if forloop.counter == 1 %}Quality
+            {% elif forloop.counter == 2 %}Innovation
+            {% elif forloop.counter == 3 %}Integrity
+            {% elif forloop.counter == 4 %}Inclusivity
+            {% elif forloop.counter == 5 %}Reach
+            {% else %}Passion{% endif %}
+          </h5>
+        </div>
+        <p class="text-muted mb-0" style="font-size:0.88rem;">
+          {% if forloop.counter == 1 %}Every title undergoes rigorous expert review before publication.
+          {% elif forloop.counter == 2 %}Embracing digital technology to improve learning outcomes.
+          {% elif forloop.counter == 3 %}We publish with honesty, accuracy, and academic responsibility.
+          {% elif forloop.counter == 4 %}Books for every learner, every language, every level.
+          {% elif forloop.counter == 5 %}Delivering knowledge from Kashmir to Kanyakumari.
+          {% else %}A genuine love for learning drives everything we do.{% endif %}
+        </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Contact -->
+  <div class="mt-5 p-5 text-center" style="background:var(--vp-primary);border-radius:16px;color:#fff;">
+    <h3 style="font-family:'Playfair Display',serif;">Get In Touch</h3>
+    <p style="color:rgba(255,255,255,0.7);">We'd love to hear from you — authors, schools, or readers.</p>
+    <div class="row g-3 justify-content-center mt-2">
+      <div class="col-md-3">
+        <i class="bi bi-envelope-fill text-warning d-block fs-3 mb-1"></i>
+        <small style="color:rgba(255,255,255,0.8);">info@vidyaprakashan.com</small>
+      </div>
+      <div class="col-md-3">
+        <i class="bi bi-telephone-fill text-warning d-block fs-3 mb-1"></i>
+        <small style="color:rgba(255,255,255,0.8);">+91 98765 43210</small>
+      </div>
+      <div class="col-md-3">
+        <i class="bi bi-geo-alt-fill text-warning d-block fs-3 mb-1"></i>
+        <small style="color:rgba(255,255,255,0.8);">123 Book Street, Delhi – 110001</small>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vidya Prakashan Mandir – Smart Online Bookstore{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════════════════════ HERO SECTION -->
+<section class="vp-hero">
+  <div class="container position-relative" style="z-index:2;">
+    <div class="row align-items-center">
+
+      <div class="col-lg-6">
+        <div class="hero-badge fade-in-up"><i class="bi bi-star-fill me-1"></i> Trusted Since 1990</div>
+
+        <h1 class="hero-title fade-in-up delay-1">
+          Your Gateway to <span>Knowledge</span> &amp; Learning
+        </h1>
+
+        <p class="hero-subtitle fade-in-up delay-2">
+          Discover thousands of books across Science, Mathematics, History, Literature, and more.
+          Read online, purchase instantly, and carry your library everywhere.
+        </p>
+
+        <div class="d-flex flex-wrap gap-3 fade-in-up delay-3">
+          <a href="/books/" class="btn btn-vp-secondary btn-lg">
+            <i class="bi bi-journal-richtext me-2"></i>Browse Books
+          </a>
+          <a href="/books/categories/" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-grid me-2"></i>Explore Categories
+          </a>
+        </div>
+
+        <div class="hero-stats fade-in-up delay-4">
+          <div>
+            <div class="hero-stat-number">5000+</div>
+            <div class="hero-stat-label">Books</div>
+          </div>
+          <div>
+            <div class="hero-stat-number">200+</div>
+            <div class="hero-stat-label">Authors</div>
+          </div>
+          <div>
+            <div class="hero-stat-number">50K+</div>
+            <div class="hero-stat-label">Students</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 d-none d-lg-flex justify-content-center">
+        <div class="hero-book-stack">
+          <!-- Decorative floating illustration -->
+          <div style="position:relative;width:300px;height:380px;">
+            <div style="position:absolute;top:30px;left:20px;width:160px;height:220px;
+                        background:linear-gradient(135deg,#e8572a,#f5a623);border-radius:8px;
+                        box-shadow:0 20px 40px rgba(0,0,0,0.3);transform:rotate(-8deg);
+                        display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-journal-text" style="font-size:4rem;color:rgba(255,255,255,0.6);"></i>
+            </div>
+            <div style="position:absolute;top:60px;right:10px;width:160px;height:220px;
+                        background:linear-gradient(135deg,#1a2744,#2d4a8a);border-radius:8px;
+                        box-shadow:0 20px 40px rgba(0,0,0,0.3);transform:rotate(5deg);
+                        display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-book" style="font-size:4rem;color:rgba(255,255,255,0.4);"></i>
+            </div>
+            <div style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%) rotate(0deg);
+                        width:170px;height:230px;background:linear-gradient(135deg,#f5a623,#e8572a);
+                        border-radius:8px;box-shadow:0 24px 48px rgba(0,0,0,0.4);
+                        display:flex;align-items:center;justify-content:center;z-index:3;">
+              <div style="text-align:center;color:#fff;padding:1rem;">
+                <i class="bi bi-book-half" style="font-size:3rem;opacity:0.8;"></i>
+                <div style="font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:700;margin-top:0.5rem;">
+                  Vidya Prakashan
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ CATEGORIES STRIP -->
+<section class="py-4" style="background:#fff;border-bottom:1px solid var(--vp-border);">
+  <div class="container">
+    <div class="d-flex gap-3 overflow-auto pb-2" style="scrollbar-width:none;">
+      {% for cat in categories %}
+      <a href="/books/category/{{ cat.slug }}/"
+         class="d-flex align-items-center gap-2 px-3 py-2 rounded-pill text-decoration-none flex-shrink-0"
+         style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);
+                color:var(--vp-primary);font-size:0.85rem;font-weight:600;transition:all 0.2s;">
+        <i class="bi {{ cat.icon|default:'bi-bookmark' }}"></i>
+        {{ cat.name }}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ FEATURED BOOKS -->
+{% if featured_books %}
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex align-items-end justify-content-between mb-4">
+      <div>
+        <h2 class="section-title">Featured Books</h2>
+        <p class="section-subtitle mb-0">Hand-picked titles from our editors</p>
+      </div>
+      <a href="/books/?featured=1" class="btn btn-sm btn-outline-secondary">
+        View All <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for book in featured_books %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="book-card h-100">
+          <div class="book-card-img-wrap">
+            {% if book.cover_image %}
+              <img src="{{ book.cover_image.url }}" alt="{{ book.title }}">
+            {% else %}
+              <div class="book-card-placeholder">
+                <i class="bi bi-book"></i>
+                <span class="book-title-overlay">{{ book.title }}</span>
+              </div>
+            {% endif %}
+            {% if book.is_featured %}
+              <span class="book-badge">Featured</span>
+            {% endif %}
+            <div class="book-card-actions">
+              <a href="/books/{{ book.slug }}/" class="btn btn-sm btn-light flex-fill">
+                <i class="bi bi-eye me-1"></i>View
+              </a>
+              <a href="/cart/add/{{ book.id }}/" class="btn btn-sm btn-warning flex-fill add-to-cart-btn" data-book-id="{{ book.id }}">
+                <i class="bi bi-cart-plus me-1"></i>Cart
+              </a>
+            </div>
+          </div>
+          <div class="book-card-body">
+            {% if book.category %}
+              <span class="book-category-tag">{{ book.category.name }}</span>
+            {% endif %}
+            <div class="book-card-title">{{ book.title }}</div>
+            <div class="book-card-author"><i class="bi bi-person me-1"></i>{{ book.author }}</div>
+            <div class="book-card-footer">
+              <span class="book-price">{{ book.price }}</span>
+              <span class="star-rating">
+                {% with avg=book.get_average_rating %}
+                  {% for i in "12345" %}
+                    <i class="bi bi-star{% if forloop.counter <= avg %}-fill{% endif %}"></i>
+                  {% endfor %}
+                {% endwith %}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════════════════════════════════ CATEGORIES GRID -->
+<section class="py-5" style="background:#fff;">
+  <div class="container">
+    <div class="d-flex align-items-end justify-content-between mb-4">
+      <div>
+        <h2 class="section-title">Browse by Category</h2>
+        <p class="section-subtitle mb-0">Find exactly what you're looking for</p>
+      </div>
+      <a href="/books/categories/" class="btn btn-sm btn-outline-secondary">
+        All Categories <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row g-3">
+      {% for cat in categories %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <a href="/books/category/{{ cat.slug }}/" class="text-decoration-none">
+          <div class="category-card">
+            <div class="category-icon">
+              <i class="bi {{ cat.icon|default:'bi-bookmark' }}"></i>
+            </div>
+            <div class="category-name">{{ cat.name }}</div>
+            <div class="category-count">{{ cat.get_book_count }} books</div>
+          </div>
+        </a>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center py-4 text-muted">
+        <i class="bi bi-grid display-4 d-block mb-3"></i>
+        No categories yet. <a href="/adminpanel/categories/add/">Add some!</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ LATEST BOOKS -->
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex align-items-end justify-content-between mb-4">
+      <div>
+        <h2 class="section-title">Latest Arrivals</h2>
+        <p class="section-subtitle mb-0">Fresh titles added to our collection</p>
+      </div>
+      <a href="/books/" class="btn btn-sm btn-outline-secondary">
+        View All <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for book in latest_books %}
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="book-card h-100">
+          <div class="book-card-img-wrap">
+            {% if book.cover_image %}
+              <img src="{{ book.cover_image.url }}" alt="{{ book.title }}">
+            {% else %}
+              <div class="book-card-placeholder">
+                <i class="bi bi-book"></i>
+                <span class="book-title-overlay">{{ book.title }}</span>
+              </div>
+            {% endif %}
+            <div class="book-card-actions">
+              <a href="/books/{{ book.slug }}/" class="btn btn-sm btn-light flex-fill">View</a>
+            </div>
+          </div>
+          <div class="book-card-body">
+            <div class="book-card-title">{{ book.title }}</div>
+            <div class="book-card-author">{{ book.author }}</div>
+            <div class="book-card-footer">
+              <span class="book-price">{{ book.price }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center py-5 text-muted">
+        <i class="bi bi-journal-x display-4 d-block mb-3"></i>
+        No books yet. <a href="/adminpanel/books/add/">Add the first one!</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ WHY CHOOSE US -->
+<section class="py-5" style="background: linear-gradient(135deg,var(--vp-primary),#2d4a8a);color:#fff;">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 style="font-family:'Playfair Display',serif;font-size:2rem;color:#fff;">Why Choose Vidya Prakashan?</h2>
+      <p style="color:rgba(255,255,255,0.7);">Trusted by students and educators across India</p>
+    </div>
+    <div class="row g-4 text-center">
+      {% for feature in "1234" %}
+      <div class="col-md-3">
+        <div style="padding:1.5rem;">
+          <div style="font-size:2.5rem;margin-bottom:1rem;color:var(--vp-secondary);">
+            {% if forloop.counter == 1 %}<i class="bi bi-shield-check"></i>
+            {% elif forloop.counter == 2 %}<i class="bi bi-file-earmark-pdf"></i>
+            {% elif forloop.counter == 3 %}<i class="bi bi-truck"></i>
+            {% else %}<i class="bi bi-headset"></i>{% endif %}
+          </div>
+          <h5 style="color:#fff;font-family:'Playfair Display',serif;">
+            {% if forloop.counter == 1 %}Secure & Trusted
+            {% elif forloop.counter == 2 %}Digital PDF Access
+            {% elif forloop.counter == 3 %}Fast Delivery
+            {% else %}24/7 Support{% endif %}
+          </h5>
+          <p style="color:rgba(255,255,255,0.65);font-size:0.88rem;">
+            {% if forloop.counter == 1 %}Your data and purchases are fully protected with enterprise-grade security.
+            {% elif forloop.counter == 2 %}Read books instantly online after purchase — no waiting, no shipping.
+            {% elif forloop.counter == 3 %}Physical books delivered across India within 3–5 business days.
+            {% else %}Our team is always ready to help you with any questions or issues.{% endif %}
+          </p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block title %}Checkout – Vidya Prakashan Mandir{% endblock %}
+{% block content %}
+
+<div class="page-hero" style="padding:2.5rem 0;">
+  <div class="container">
+    <h1 class="page-hero-title"><i class="bi bi-bag-check me-2"></i>Checkout</h1>
+    <p class="page-hero-subtitle">Complete your order in just a few steps</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row g-4">
+
+      <!-- Delivery Info -->
+      <div class="col-lg-7">
+        <div class="vp-form-card mb-4">
+          <h5 style="font-family:'Playfair Display',serif;" class="mb-4">
+            <i class="bi bi-geo-alt me-2 text-warning"></i>Delivery Information
+          </h5>
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label small fw-semibold">Full Name *</label>
+              <input type="text" name="full_name" class="form-control" required
+                     value="{{ user.get_full_name|default:'' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Email *</label>
+              <input type="email" name="email" class="form-control" required value="{{ user.email }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Phone *</label>
+              <input type="text" name="phone" class="form-control" required
+                     value="{{ profile.phone|default:'' }}">
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-semibold">Address *</label>
+              <textarea name="address" class="form-control" rows="2" required>{{ profile.address|default:'' }}</textarea>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold">City *</label>
+              <input type="text" name="city" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold">State *</label>
+              <input type="text" name="state" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold">PIN Code *</label>
+              <input type="text" name="pincode" class="form-control" maxlength="6" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="vp-form-card">
+          <h5 style="font-family:'Playfair Display',serif;" class="mb-4">
+            <i class="bi bi-credit-card me-2 text-warning"></i>Payment Method
+          </h5>
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="form-check p-3 rounded mb-2" style="border:1px solid var(--vp-border);">
+                <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod" checked>
+                <label class="form-check-label w-100" for="cod">
+                  <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-cash-coin fs-4 text-success"></i>
+                    <div>
+                      <div class="fw-bold">Cash on Delivery</div>
+                      <div class="small text-muted">Pay when your book arrives</div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+              <div class="form-check p-3 rounded mb-2" style="border:1px solid var(--vp-border);">
+                <input class="form-check-input" type="radio" name="payment_method" id="upi" value="upi">
+                <label class="form-check-label w-100" for="upi">
+                  <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-phone fs-4 text-primary"></i>
+                    <div>
+                      <div class="fw-bold">UPI Payment</div>
+                      <div class="small text-muted">Google Pay, PhonePe, Paytm</div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+              <div class="form-check p-3 rounded" style="border:1px solid var(--vp-border);">
+                <input class="form-check-input" type="radio" name="payment_method" id="online" value="online">
+                <label class="form-check-label w-100" for="online">
+                  <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-credit-card fs-4 text-warning"></i>
+                    <div>
+                      <div class="fw-bold">Online Payment</div>
+                      <div class="small text-muted">Debit/Credit Card, Net Banking</div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="col-lg-5">
+        <div class="vp-form-card sticky-top" style="top:90px;">
+          <h5 style="font-family:'Playfair Display',serif;" class="mb-3">Order Summary</h5>
+
+          {% for item in items %}
+          <div class="d-flex align-items-center gap-2 mb-3 pb-2" style="border-bottom:1px solid var(--vp-border);">
+            {% if item.book.cover_image %}
+              <img src="{{ item.book.cover_image.url }}" style="width:48px;height:64px;object-fit:cover;border-radius:4px;" alt="">
+            {% else %}
+              <div style="width:48px;height:64px;background:var(--vp-primary);border-radius:4px;
+                          display:flex;align-items:center;justify-content:center;">
+                <i class="bi bi-book text-white small"></i>
+              </div>
+            {% endif %}
+            <div class="flex-grow-1">
+              <div class="fw-bold small">{{ item.book.title|truncatechars:32 }}</div>
+              <div class="text-muted" style="font-size:0.75rem;">Qty: {{ item.quantity }}</div>
+            </div>
+            <div class="fw-bold small" style="color:var(--vp-accent);">₹{{ item.get_subtotal }}</div>
+          </div>
+          {% endfor %}
+
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal ({{ items.count }} items)</span>
+            <span>₹{{ total }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2 text-success small">
+            <span><i class="bi bi-truck me-1"></i>Delivery</span>
+            <span>Free</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
+            <span>Total Payable</span>
+            <span style="color:var(--vp-accent);">₹{{ total }}</span>
+          </div>
+
+          <button type="submit" class="btn btn-vp-secondary w-100 py-3 fw-bold fs-6">
+            <i class="bi bi-bag-check-fill me-2"></i>Place Order
+          </button>
+
+          <div class="text-center mt-3">
+            <small class="text-muted">
+              <i class="bi bi-shield-lock text-success me-1"></i>
+              100% Secure & Protected
+            </small>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
+{% endblock %}

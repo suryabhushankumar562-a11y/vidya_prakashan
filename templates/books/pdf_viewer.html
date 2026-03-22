@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Read: {{ book.title }} – Vidya Prakashan Mandir{% endblock %}
+
+{% block extra_css %}
+<style>
+body { background: #1a1a2e; }
+.vp-main { background: #1a1a2e; }
+.vp-footer { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="background:#1a1a2e;min-height:100vh;padding:1rem;">
+  <div class="container-fluid">
+
+    <!-- Header Bar -->
+    <div class="d-flex align-items-center justify-content-between mb-3 p-3 rounded"
+         style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
+      <div class="d-flex align-items-center gap-3">
+        <a href="/books/{{ book.slug }}/" class="btn btn-sm btn-outline-light">
+          <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+        <div>
+          <div class="text-white fw-bold">{{ book.title }}</div>
+          <div class="text-muted small">by {{ book.author }}</div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        {% if has_purchased %}
+          <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Full Access</span>
+        {% else %}
+          <span class="badge bg-warning text-dark">
+            <i class="bi bi-eye me-1"></i>Preview — {{ book.preview_pages }} pages
+          </span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if has_purchased %}
+      <!-- ── Full PDF Viewer ── -->
+      <iframe
+        src="/books/{{ book.slug }}/pdf/#toolbar=1&navpanes=1&scrollbar=1"
+        class="pdf-viewer-wrap"
+        title="{{ book.title }} PDF">
+      </iframe>
+
+    {% elif user.is_authenticated %}
+      <!-- ── Preview only + purchase prompt ── -->
+      <div class="row">
+        <div class="col-lg-9">
+          <div class="pdf-locked-overlay mb-3">
+            <i class="bi bi-file-earmark-pdf-fill" style="font-size:4rem;color:var(--vp-secondary);"></i>
+            <h4 class="mt-3" style="font-family:'Playfair Display',serif;">Preview Mode</h4>
+            <p style="color:rgba(255,255,255,0.7);">
+              You're viewing the first <strong style="color:var(--vp-secondary);">{{ book.preview_pages }} pages</strong>
+              of this book for free.
+            </p>
+
+            {% if book.pdf_file %}
+            <p class="text-muted small mt-2">
+              (Full PDF viewer requires purchase. Preview shown below as a placeholder.)
+            </p>
+            {% endif %}
+
+            <div class="mt-4">
+              <a href="/cart/add/{{ book.id }}/" class="btn btn-vp-secondary btn-lg me-2">
+                <i class="bi bi-cart-plus me-2"></i>Purchase for ₹{{ book.price }}
+              </a>
+              <a href="/books/{{ book.slug }}/" class="btn btn-outline-light">
+                <i class="bi bi-info-circle me-2"></i>Book Details
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="vp-form-card">
+            <h6 class="fw-bold mb-3" style="color:var(--vp-primary);">Unlock Full Access</h6>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span class="small">Full {{ book.pages|default:"all" }} pages</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span class="small">Read online anytime</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span class="small">Secure & permanent access</span>
+            </div>
+            <hr>
+            <div class="book-price mb-3">{{ book.price }}</div>
+            <a href="/cart/add/{{ book.id }}/" class="btn btn-vp-secondary w-100">
+              <i class="bi bi-lock-fill me-2"></i>Buy & Unlock
+            </a>
+          </div>
+        </div>
+      </div>
+
+    {% else %}
+      <!-- ── Not logged in ── -->
+      <div class="pdf-locked-overlay">
+        <i class="bi bi-lock-fill" style="font-size:4rem;color:var(--vp-secondary);"></i>
+        <h4 class="mt-3" style="font-family:'Playfair Display',serif;color:#fff;">Login to Preview</h4>
+        <p style="color:rgba(255,255,255,0.7);">
+          Create a free account to preview the first {{ book.preview_pages }} pages.
+          Purchase for full access.
+        </p>
+        <div class="mt-4 d-flex gap-3 justify-content-center">
+          <a href="/accounts/login/?next=/books/{{ book.slug }}/read/" class="btn btn-vp-secondary btn-lg">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Login
+          </a>
+          <a href="/accounts/register/" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-person-plus me-2"></i>Register Free
+          </a>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

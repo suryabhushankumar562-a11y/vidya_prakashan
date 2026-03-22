@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Order {{ order.order_number }} – Vidya Prakashan Mandir{% endblock %}
+{% block content %}
+
+<div class="page-hero" style="padding:2.5rem 0;">
+  <div class="container">
+    <h1 class="page-hero-title">Order Details</h1>
+    <p class="page-hero-subtitle">Order #{{ order.order_number }}</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="vp-form-card">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div>
+            <h5 style="font-family:'Playfair Display',serif;">Order #{{ order.order_number }}</h5>
+            <div class="text-muted small">Placed on {{ order.created_at|date:"d F Y at H:i" }}</div>
+          </div>
+          <span class="order-status status-{{ order.status }} fs-6">{{ order.get_status_display }}</span>
+        </div>
+
+        <h6 class="fw-bold mb-3 text-muted text-uppercase small">Items Ordered</h6>
+        {% for item in order.items.all %}
+        <div class="d-flex align-items-center gap-3 mb-3 pb-3" style="border-bottom:1px solid var(--vp-border);">
+          {% if item.book and item.book.cover_image %}
+            <img src="{{ item.book.cover_image.url }}" style="width:56px;height:72px;object-fit:cover;border-radius:6px;" alt="">
+          {% else %}
+            <div style="width:56px;height:72px;background:var(--vp-primary);border-radius:6px;
+                        display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-book text-white"></i>
+            </div>
+          {% endif %}
+          <div class="flex-grow-1">
+            <div class="fw-bold">{{ item.book.title|default:"Book no longer available" }}</div>
+            {% if item.book %}<div class="text-muted small">by {{ item.book.author }}</div>{% endif %}
+            <div class="text-muted small">Qty: {{ item.quantity }} × ₹{{ item.price }}</div>
+          </div>
+          <div class="fw-bold" style="color:var(--vp-accent);">₹{{ item.get_subtotal }}</div>
+          {% if item.book and order.status == 'completed' %}
+          <a href="/books/{{ item.book.slug }}/read/" class="btn btn-sm btn-outline-success">
+            <i class="bi bi-book-half me-1"></i>Read
+          </a>
+          {% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="d-flex justify-content-end">
+          <div style="min-width:220px;">
+            <div class="d-flex justify-content-between mb-1 small">
+              <span class="text-muted">Subtotal</span><span>₹{{ order.total_amount }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-1 small text-success">
+              <span>Delivery</span><span>Free</span>
+            </div>
+            <hr class="my-2">
+            <div class="d-flex justify-content-between fw-bold">
+              <span>Total</span>
+              <span style="color:var(--vp-accent);">₹{{ order.get_final_total }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="vp-form-card mb-3">
+        <h6 class="fw-bold mb-3 text-muted text-uppercase small">Delivery Address</h6>
+        <div class="fw-bold">{{ order.full_name }}</div>
+        <div class="text-muted small mt-1">{{ order.address }}</div>
+        <div class="text-muted small">{{ order.city }}, {{ order.state }} – {{ order.pincode }}</div>
+        <div class="text-muted small mt-1"><i class="bi bi-telephone me-1"></i>{{ order.phone }}</div>
+        <div class="text-muted small"><i class="bi bi-envelope me-1"></i>{{ order.email }}</div>
+      </div>
+
+      <div class="vp-form-card">
+        <h6 class="fw-bold mb-3 text-muted text-uppercase small">Payment Info</h6>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted small">Method</span>
+          <span class="small fw-semibold">{{ order.get_payment_method_display }}</span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-muted small">Payment Status</span>
+          {% if order.is_paid %}
+          <span class="badge bg-success">Paid</span>
+          {% else %}
+          <span class="badge bg-warning text-dark">Pending</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <a href="/orders/history/" class="btn btn-outline-secondary w-100 mt-3">
+        <i class="bi bi-arrow-left me-2"></i>Back to Orders
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% block title %}Manage Books – Admin{% endblock %}
+{% block page_title %}Books Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 style="font-family:'Playfair Display',serif;color:var(--vp-primary);">All Books</h4>
+    <p class="text-muted small mb-0">{{ books.count }} book{{ books.count|pluralize }} in the catalog</p>
+  </div>
+  <a href="/adminpanel/books/add/" class="btn btn-vp-secondary">
+    <i class="bi bi-plus-circle me-2"></i>Add New Book
+  </a>
+</div>
+
+<!-- Search -->
+<div class="mb-3">
+  <form method="GET" class="d-flex gap-2" style="max-width:400px;">
+    <input type="text" name="q" class="form-control form-control-sm" placeholder="Search by title..." value="{{ query }}">
+    <button class="btn btn-sm btn-vp-primary">Search</button>
+    {% if query %}<a href="/adminpanel/books/" class="btn btn-sm btn-outline-secondary">Clear</a>{% endif %}
+  </form>
+</div>
+
+<div class="bg-white rounded overflow-hidden" style="border:1px solid var(--vp-border);box-shadow:var(--vp-shadow);">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0 vp-table">
+      <thead>
+        <tr>
+          <th>Cover</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>PDF</th>
+          <th>Active</th>
+          <th>Featured</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in books %}
+        <tr>
+          <td>
+            {% if book.cover_image %}
+              <img src="{{ book.cover_image.url }}" style="width:40px;height:52px;object-fit:cover;border-radius:4px;" alt="">
+            {% else %}
+              <div style="width:40px;height:52px;background:var(--vp-primary);border-radius:4px;
+                          display:flex;align-items:center;justify-content:center;">
+                <i class="bi bi-book text-white small"></i>
+              </div>
+            {% endif %}
+          </td>
+          <td>
+            <div class="fw-bold small">{{ book.title|truncatechars:40 }}</div>
+            {% if book.isbn %}<div class="text-muted" style="font-size:0.72rem;">ISBN: {{ book.isbn }}</div>{% endif %}
+          </td>
+          <td class="small text-muted">{{ book.author }}</td>
+          <td>
+            {% if book.category %}
+            <span class="badge-vp">{{ book.category.name }}</span>
+            {% else %}
+            <span class="text-muted small">—</span>
+            {% endif %}
+          </td>
+          <td class="fw-bold" style="color:var(--vp-accent);">₹{{ book.price }}</td>
+          <td class="text-center">
+            {% if book.pdf_file %}
+              <i class="bi bi-file-earmark-pdf-fill text-success" title="PDF uploaded"></i>
+            {% else %}
+              <i class="bi bi-x-circle text-muted" title="No PDF"></i>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            {% if book.is_active %}
+              <i class="bi bi-check-circle-fill text-success"></i>
+            {% else %}
+              <i class="bi bi-x-circle-fill text-danger"></i>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            {% if book.is_featured %}
+              <i class="bi bi-star-fill text-warning"></i>
+            {% else %}
+              <i class="bi bi-star text-muted"></i>
+            {% endif %}
+          </td>
+          <td>
+            <div class="d-flex gap-1">
+              <a href="/books/{{ book.slug }}/" target="_blank" class="btn btn-sm btn-outline-secondary" title="View">
+                <i class="bi bi-eye"></i>
+              </a>
+              <a href="/adminpanel/books/{{ book.pk }}/edit/" class="btn btn-sm btn-outline-primary" title="Edit">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <form action="/adminpanel/books/{{ book.pk }}/delete/" method="post"
+                    onsubmit="return confirm('Delete \'{{ book.title }}\'? This cannot be undone.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="9" class="text-center py-5 text-muted">
+            <i class="bi bi-journal-x display-4 d-block mb-3"></i>
+            No books found.
+            <a href="/adminpanel/books/add/" class="text-warning fw-bold">Add the first book!</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

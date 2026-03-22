@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}My Cart – Vidya Prakashan Mandir{% endblock %}
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <h1 class="page-hero-title"><i class="bi bi-cart3 me-2"></i>My Cart</h1>
+    <p class="page-hero-subtitle">{{ items.count }} item{{ items.count|pluralize }} in your cart</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  {% if items %}
+  <div class="row g-4">
+    <!-- Cart Items -->
+    <div class="col-lg-8">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 style="font-family:'Playfair Display',serif;">Cart Items</h5>
+        <form action="/cart/clear/" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-trash me-1"></i>Clear All
+          </button>
+        </form>
+      </div>
+
+      {% for item in items %}
+      <div class="cart-item-row">
+        <!-- Book Cover -->
+        {% if item.book.cover_image %}
+          <img src="{{ item.book.cover_image.url }}" class="cart-book-cover" alt="{{ item.book.title }}">
+        {% else %}
+          <div class="cart-book-cover d-flex align-items-center justify-content-center"
+               style="background:linear-gradient(135deg,var(--vp-primary),#2d4a8a);border-radius:4px;">
+            <i class="bi bi-book text-white"></i>
+          </div>
+        {% endif %}
+
+        <!-- Book Info -->
+        <div class="flex-grow-1">
+          <a href="/books/{{ item.book.slug }}/" class="text-decoration-none">
+            <div class="fw-bold" style="color:var(--vp-primary);">{{ item.book.title }}</div>
+          </a>
+          <div class="text-muted small">by {{ item.book.author }}</div>
+          {% if item.book.category %}
+          <span class="book-category-tag mt-1 d-inline-block">{{ item.book.category.name }}</span>
+          {% endif %}
+        </div>
+
+        <!-- Quantity -->
+        <div style="min-width:130px;">
+          <form action="/cart/update/{{ item.id }}/" method="post" class="d-flex align-items-center gap-1">
+            {% csrf_token %}
+            <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}"
+                    class="btn btn-sm btn-outline-secondary" style="padding:0.2rem 0.5rem;">−</button>
+            <span class="px-2 fw-bold">{{ item.quantity }}</span>
+            <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}"
+                    class="btn btn-sm btn-outline-secondary" style="padding:0.2rem 0.5rem;">+</button>
+          </form>
+        </div>
+
+        <!-- Subtotal -->
+        <div class="text-end" style="min-width:90px;">
+          <div class="fw-bold" style="color:var(--vp-accent);font-family:'Playfair Display',serif;font-size:1.1rem;">
+            ₹{{ item.get_subtotal }}
+          </div>
+          <div class="text-muted small">₹{{ item.book.price }} each</div>
+        </div>
+
+        <!-- Remove -->
+        <form action="/cart/remove/{{ item.id }}/" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Order Summary -->
+    <div class="col-lg-4">
+      <div class="vp-form-card sticky-top" style="top:90px;">
+        <h5 style="font-family:'Playfair Display',serif;" class="mb-3">Order Summary</h5>
+
+        {% for item in items %}
+        <div class="d-flex justify-content-between small mb-1">
+          <span class="text-muted">{{ item.book.title|truncatechars:28 }} × {{ item.quantity }}</span>
+          <span>₹{{ item.get_subtotal }}</span>
+        </div>
+        {% endfor %}
+
+        <hr>
+        <div class="d-flex justify-content-between mb-1">
+          <span>Subtotal</span>
+          <span>₹{{ total }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-1 text-muted small">
+          <span>Delivery</span>
+          <span class="text-success">Free</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
+          <span>Total</span>
+          <span style="color:var(--vp-accent);">₹{{ total }}</span>
+        </div>
+
+        <a href="/orders/checkout/" class="btn btn-vp-secondary w-100 py-2 fw-bold">
+          <i class="bi bi-bag-check me-2"></i>Proceed to Checkout
+        </a>
+        <a href="/books/" class="btn btn-outline-secondary w-100 mt-2">
+          <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+        </a>
+
+        <div class="text-center mt-3">
+          <small class="text-muted">
+            <i class="bi bi-shield-check text-success me-1"></i>Safe & Secure Checkout
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-cart-x display-1 text-muted d-block mb-4"></i>
+    <h3 style="font-family:'Playfair Display',serif;">Your cart is empty</h3>
+    <p class="text-muted">Add some books to get started on your learning journey!</p>
+    <a href="/books/" class="btn btn-vp-secondary btn-lg mt-2">
+      <i class="bi bi-journal-richtext me-2"></i>Browse Books
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

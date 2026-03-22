@@ -1,0 +1,71 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% block title %}Manage Orders – Admin{% endblock %}
+{% block page_title %}Orders Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 style="font-family:'Playfair Display',serif;color:var(--vp-primary);">All Orders</h4>
+    <p class="text-muted small mb-0">{{ orders.count }} order{{ orders.count|pluralize }}</p>
+  </div>
+  <!-- Status Filter -->
+  <div class="d-flex gap-2">
+    <a href="/adminpanel/orders/" class="btn btn-sm {% if not status_filter %}btn-vp-primary{% else %}btn-outline-secondary{% endif %}">All</a>
+    <a href="/adminpanel/orders/?status=pending" class="btn btn-sm {% if status_filter == 'pending' %}btn-warning{% else %}btn-outline-warning{% endif %}">Pending</a>
+    <a href="/adminpanel/orders/?status=completed" class="btn btn-sm {% if status_filter == 'completed' %}btn-success{% else %}btn-outline-success{% endif %}">Completed</a>
+    <a href="/adminpanel/orders/?status=cancelled" class="btn btn-sm {% if status_filter == 'cancelled' %}btn-danger{% else %}btn-outline-danger{% endif %}">Cancelled</a>
+  </div>
+</div>
+
+<div class="bg-white rounded overflow-hidden" style="border:1px solid var(--vp-border);box-shadow:var(--vp-shadow);">
+  <table class="table table-hover mb-0 vp-table">
+    <thead>
+      <tr>
+        <th>Order #</th>
+        <th>Customer</th>
+        <th>Items</th>
+        <th>Total</th>
+        <th>Payment</th>
+        <th>Paid</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td><a href="/adminpanel/orders/{{ order.pk }}/" class="text-decoration-none"><code>{{ order.order_number }}</code></a></td>
+        <td>
+          <div class="fw-bold small">{{ order.full_name }}</div>
+          <div class="text-muted" style="font-size:0.72rem;">{{ order.user.username }}</div>
+        </td>
+        <td class="text-center"><span class="badge-vp">{{ order.items.count }}</span></td>
+        <td class="fw-bold" style="color:var(--vp-accent);">₹{{ order.total_amount }}</td>
+        <td class="small">{{ order.get_payment_method_display }}</td>
+        <td class="text-center">
+          {% if order.is_paid %}
+            <i class="bi bi-check-circle-fill text-success"></i>
+          {% else %}
+            <i class="bi bi-x-circle text-muted"></i>
+          {% endif %}
+        </td>
+        <td><span class="order-status status-{{ order.status }}">{{ order.get_status_display }}</span></td>
+        <td class="small text-muted">{{ order.created_at|date:"d M, H:i" }}</td>
+        <td>
+          <a href="/adminpanel/orders/{{ order.pk }}/" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-pencil me-1"></i>Manage
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="9" class="text-center py-5 text-muted">
+          <i class="bi bi-bag-x display-4 d-block mb-3"></i>No orders found.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
