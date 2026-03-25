@@ -204,10 +204,10 @@ All endpoints are prefixed with `/api/`.
 curl -X POST http://127.0.0.1:8000/api/auth/register/ \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "apple",
+    "username": "apple_bhushan",
     "email": "apple@example.com",
     "password": "Apple@123",
-    "confirm_password": "Apple@123"
+    "confirm_password": "Apple@8917"
   }'
 ```
 
@@ -215,7 +215,7 @@ curl -X POST http://127.0.0.1:8000/api/auth/register/ \
 ```bash
 curl -X POST http://127.0.0.1:8000/api/auth/login/ \
   -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "admin123"}'
+  -d '{"username": "admin", "password": "admin"}'
 ```
 
 ### Books
